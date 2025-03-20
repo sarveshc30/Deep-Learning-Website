@@ -61,3 +61,6 @@ def churn():
             st.header('It is likely the customer will leave')
         else:
             st.header('It is likely the customer will stay')
+
+    if st.button('Back'):
+        return True

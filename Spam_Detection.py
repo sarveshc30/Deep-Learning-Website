@@ -30,8 +30,6 @@ def spam():
     model = tf.keras.models.load_model('models/Spam_model.keras', compile=False)
 
 
-    #Button Function
-
     if st.button('Predict'):
         results = model.predict(model_input)[0][0]
 
@@ -41,3 +39,6 @@ def spam():
             st.header('Not Spam')
         else:
             st.header('Spam')
+
+    if st.button('Back'):
+        return True

@@ -33,3 +33,6 @@ def movie():
         model_input = text_processing(input_summary)
         result = model.predict(model_input)
         st.header(legend[0][np.argmax(result)])
+
+    if st.button('Back'):
+        return True
