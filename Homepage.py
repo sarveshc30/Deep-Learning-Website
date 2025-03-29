@@ -25,10 +25,9 @@ db = client.webdb
 people = db.people
 
 
-#instert user in dictionary format
-def validate_user(email, password):
-    # Dummy validation: replace with your actual validation logic.
-    if email == "admin@example.com" and password == "admin123":
+def validate_user(input_email, input_password):
+    user = people.find_one({"email": input_email})
+    if user and user["password"] == str(hash(input_password)):
         return True
     return False
 
@@ -42,13 +41,15 @@ if st.session_state.page == "login":
             st.session_state.logged_in = True
             st.session_state.page = "home"
             st.success("Logged in successfully!")
+            st.rerun()
         else:
             st.error("Invalid email or password.")
     if st.button("Sign Up"):
         st.session_state.page = "sign_up"
+        st.rerun()
 
 # Sign Up Page
-if st.session_state.page == "sign_up":
+elif st.session_state.page == "sign_up":
     st.subheader("Sign Up")
     fname = st.text_input('First Name')
     lname = st.text_input('Last Name')
@@ -58,7 +59,15 @@ if st.session_state.page == "sign_up":
 
     if st.button("Sign Up"):
         if password2 == password:
-            people.insert_one({'fname': fname, 'lname': lname, 'email': email, 'password': str(hash(password))})
+            if people.find_one({"email": email}):
+                st.error("Email already exists. Please use a different email.")
+            else:
+                people.insert_one({'fname': fname, 'lname': lname, 'email': email, 'password': str(hash(password))})
+                st.success("Account created successfully! You can now log in.")
+                st.session_state.page = "login"
+                st.rerun()
+        else:
+            st.error("Passwords do not match. Please try again.")
 
 # Home Page with project options
 if st.session_state.page == "home":
