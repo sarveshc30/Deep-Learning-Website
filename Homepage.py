@@ -2,6 +2,9 @@ import streamlit as st
 import Spam_Detection
 import Movie_Classification
 import Customer_Churn
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+from pickle import load
 
 st.set_page_config(layout="wide")
 st.markdown("<h1 style='text-align: center; font-size: 40px;'>Home Page</h1>", unsafe_allow_html=True)
@@ -12,6 +15,17 @@ if "logged_in" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "login"
 
+
+#MongoDB connection
+#Mongo URI stored outside repository
+with open(r'F:\Academics\Projects\CodSoft\uri.pkl', 'rb') as file:
+    uri = load(file)
+client = MongoClient(uri, server_api=ServerApi('1'))
+db = client.webdb
+people = db.people
+
+
+#instert user in dictionary format
 def validate_user(email, password):
     # Dummy validation: replace with your actual validation logic.
     if email == "admin@example.com" and password == "admin123":
@@ -31,7 +45,20 @@ if st.session_state.page == "login":
         else:
             st.error("Invalid email or password.")
     if st.button("Sign Up"):
-        st.info("Sign up functionality is not implemented yet.")
+        st.session_state.page = "sign_up"
+
+# Sign Up Page
+if st.session_state.page == "sign_up":
+    st.subheader("Sign Up")
+    fname = st.text_input('First Name')
+    lname = st.text_input('Last Name')
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    password2 = st.text_input("Repeat Password", type="password")
+
+    if st.button("Sign Up"):
+        if password2 == password:
+            people.insert_one({'fname': fname, 'lname': lname, 'email': email, 'password': str(hash(password))})
 
 # Home Page with project options
 if st.session_state.page == "home":
