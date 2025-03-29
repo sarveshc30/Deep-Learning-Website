@@ -25,6 +25,7 @@ db = client.webdb
 people = db.people
 
 
+#instert user in dictionary format
 def validate_user(input_email, input_password):
     user = people.find_one({"email": input_email})
     if user and user["password"] == str(hash(input_password)):
@@ -70,7 +71,7 @@ elif st.session_state.page == "sign_up":
             st.error("Passwords do not match. Please try again.")
 
 # Home Page with project options
-if st.session_state.page == "home":
+elif st.session_state.page == "home":
     col1, col2, col3 = st.columns(3, gap="large")
     with col1:
         st.info("""
@@ -105,7 +106,7 @@ if st.session_state.page == "home":
             st.session_state.page = "churn"
 
 # Spam Detection Page
-if st.session_state.page == "spam":
+elif st.session_state.page == "spam":
     if Spam_Detection.spam():
         st.session_state.page = "home"
 
